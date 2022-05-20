@@ -14,6 +14,10 @@ app.use(adminRoutes);
 
 app.use(shopRoutes);
 
+app.use((request, response, next) => {
+  response.send('<h1>Page not found!</h1>');
+});
+
 app.listen(8000);
 
 // additional configuration for nodemon so address already in use error didn't stuck
