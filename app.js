@@ -3,14 +3,18 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const expressHandlebars = require('express-handlebars');
 
 const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 const app = express();
 
+// registering external template engine to express application (for handlebars, as it is not a built in template engine)
+app.engine('handlebars', expressHandlebars());
+
 // adding configuration to inform application that use pug as view engine
-app.set('view engine', 'pug');
+app.set('view engine', 'handlebars');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }));
