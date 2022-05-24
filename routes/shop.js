@@ -9,8 +9,11 @@ const router = express.Router();
 const adminData = require('./admin');
 
 router.get('/', (request, response, next) => {
-  console.log(adminData.products);
-  response.sendFile(path.join(rootDir, 'views', 'shop.html'));
+
+  const products = adminData.products;
+
+  response.render('shop', { title: 'My Amazing Shop', products }); // telling application to use default template engine (here in this case is 'pug')
+
 });
 
 module.exports = router;
