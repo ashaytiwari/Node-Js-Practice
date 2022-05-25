@@ -10,11 +10,12 @@ const shopRoutes = require('./routes/shop');
 
 const app = express();
 
-// registering external template engine to express application (for handlebars, as it is not a built in template engine)
-app.engine('handlebars', expressHandlebars());
+// registering external template engine to express application (for handlebars, as handlebars is not a built in template engine)
+// uncomment below line if wanna use handlebars for template engine
+// app.engine('handlebars', expressHandlebars()); 
 
 // adding configuration to inform application that use pug as view engine
-app.set('view engine', 'handlebars');
+app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }));
