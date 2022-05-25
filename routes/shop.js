@@ -1,19 +1,9 @@
-const path = require('path');
-
 const express = require('express');
 
-const rootDir = require('../util/path');
+const productsController = require('../controllers/products');
 
 const router = express.Router();
 
-const adminData = require('./admin');
-
-router.get('/', (request, response, next) => {
-
-  const products = adminData.products;
-
-  response.render('shop', { title: 'My Amazing Shop', products, path: '/', hasProducts: products.length > 0 }); // telling application to use default template engine (here in this case is 'pug')
-
-});
+router.get('/', productsController.getProducts);
 
 module.exports = router;
