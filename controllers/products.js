@@ -18,13 +18,15 @@ exports.postAddProducts = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
-  const products = Product.getAllProducts();
+  Product.getAllProducts((products) => {
 
-  response.render('shop', {
-    title: 'My Amazing Shop',
-    products,
-    path: '/',
-    hasProducts: products.length > 0
-  }); // telling application to use default template engine (here in this case is 'ejs')
+    response.render('shop', {
+      title: 'My Amazing Shop',
+      products,
+      path: '/',
+      hasProducts: products.length > 0
+    });
+
+  });
 
 }
