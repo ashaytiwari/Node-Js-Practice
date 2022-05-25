@@ -8,6 +8,8 @@ const expressHandlebars = require('express-handlebars');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
+const errorsController = require('./controllers/errors');
+
 const app = express();
 
 // registering external template engine to express application (for handlebars, as handlebars is not a built in template engine)
@@ -26,11 +28,7 @@ app.use('/admin', adminRoutes);
 
 app.use(shopRoutes);
 
-app.use((request, response, next) => {
-
-  response.status(404).render('404', { title: 'Page Not Found', path: null });
-
-});
+app.use(errorsController.get404page);
 
 app.listen(8000);
 
