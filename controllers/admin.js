@@ -2,7 +2,10 @@ const Product = require('../models/product');
 
 exports.getAddProducts = (request, response, next) => {
 
-  response.render('add-product', { title: 'Add Product', path: '/admin/add-product' });
+  response.render('admin/add-product', {
+    title: 'Add Product',
+    path: '/admin/add-product'
+  });
 
 };
 
@@ -20,11 +23,10 @@ exports.getProducts = (request, response, next) => {
 
   Product.getAllProducts((products) => {
 
-    response.render('shop', {
-      title: 'My Amazing Shop',
+    response.render('admin/products', {
+      title: 'Admin Products',
       products,
-      path: '/',
-      hasProducts: products.length > 0
+      path: '/admin/products'
     });
 
   });
