@@ -31,7 +31,7 @@ exports.getProducts = (request, response, next) => {
 exports.getCart = (request, response, next) => {
 
   response.render('shop/cart', {
-    title: 'Cart',
+    title: 'Your Cart',
     path: '/cart'
   });
 
@@ -40,8 +40,17 @@ exports.getCart = (request, response, next) => {
 exports.getCheckout = (request, response, next) => {
 
   response.render('shop/checkout', {
-    title: 'Checkout',
+    title: 'Your Checkout',
     path: '/checkout'
+  });
+
+}
+
+exports.getOrders = (request, response, next) => {
+
+  response.render('shop/orders', {
+    title: 'Your Orders',
+    path: '/orders'
   });
 
 }
