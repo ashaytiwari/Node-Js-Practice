@@ -22,7 +22,8 @@ const getProducts = (callback) => {
 
 class Product {
 
-  constructor(title, imageURL, price, description) {
+  constructor(id, title, imageURL, price, description) {
+    this.id = id;
     this.title = title;
     this.imageURL = imageURL;
     this.price = price;
@@ -39,13 +40,26 @@ class Product {
 
   save() {
 
-    this.id = Date.now().toString();
-
     getProducts((products) => {
 
-      products.push(this);
+      if (this.id !== null) {
 
-      this.writeFile(filePath, products);
+        const existingProductIndex = products.findIndex((_product) => _product.id === this.id);
+        const updatedProducts = [...products];
+
+        updatedProducts[existingProductIndex] = this;
+
+        this.writeFile(filePath, updatedProducts);
+
+      } else {
+
+        this.id = Date.now().toString();
+
+        products.push(this);
+
+        this.writeFile(filePath, products);
+
+      }
 
     });
 
