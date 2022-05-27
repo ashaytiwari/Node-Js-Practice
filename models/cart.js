@@ -70,6 +70,22 @@ class Cart {
     });
   }
 
+  static getAllProductsFromCart(callback) {
+
+    fs.readFile(filePath, (err, fileContent) => {
+
+
+      if (err) {
+        callback(null);
+      } else {
+        const cart = JSON.parse(fileContent);
+        callback(cart);
+      }
+
+    });
+
+  }
+
 }
 
 module.exports = Cart;
