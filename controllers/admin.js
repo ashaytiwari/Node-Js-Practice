@@ -64,11 +64,20 @@ exports.postEditProducts = (request, response, next) => {
 
   const product = new Product(id, title, imageURL, price, description);
 
-  console.log(product);
-
   product.save();
 
   response.redirect('/admin/products');
+
+}
+
+exports.deleteProduct = (request, response, next) => {
+
+  const productId = request.body.productId;
+
+  Product.deleteProductById(productId);
+
+  response.redirect('/admin/products');
+
 
 }
 
