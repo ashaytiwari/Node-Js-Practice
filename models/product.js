@@ -39,7 +39,11 @@ class Product {
 
   save() {
 
+    this.id = Date.now().toString();
+
     getProducts((products) => {
+
+      console.log(this);
 
       products.push(this);
 
@@ -52,6 +56,15 @@ class Product {
   static getAllProducts(callback) {
 
     getProducts(callback);
+
+  }
+
+  static findProductById(id, callback) {
+
+    getProducts((products) => {
+      const product = products.find((_product) => _product.id === id);
+      callback(product);
+    });
 
   }
 
