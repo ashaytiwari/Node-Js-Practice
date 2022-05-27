@@ -43,8 +43,6 @@ class Product {
 
     getProducts((products) => {
 
-      console.log(this);
-
       products.push(this);
 
       this.writeFile(filePath, products);

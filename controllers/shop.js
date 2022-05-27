@@ -51,6 +51,16 @@ exports.getCart = (request, response, next) => {
 
 };
 
+exports.postCart = (request, response, next) => {
+
+  const productId = request.body.productId;
+
+  console.log(productId);
+
+  response.redirect('/cart');
+
+};
+
 exports.getCheckout = (request, response, next) => {
 
   response.render('shop/checkout', {
