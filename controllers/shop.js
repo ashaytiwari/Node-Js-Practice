@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const Cart = require('../models/cart');
 
 exports.getLandingPage = (request, response, next) => {
 
@@ -55,7 +56,9 @@ exports.postCart = (request, response, next) => {
 
   const productId = request.body.productId;
 
-  console.log(productId);
+  Product.findProductById(productId, (product) => {
+    Cart.addProductToCart(productId, product.price);
+  });
 
   response.redirect('/cart');
 
