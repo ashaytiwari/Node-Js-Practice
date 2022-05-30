@@ -22,15 +22,20 @@ exports.getLandingPage = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
-  Product.getAllProducts((products) => {
+  Product.getAllProducts()
+    .then((result) => {
+      const [rows, metadata] = result;
 
-    response.render('shop/product-list', {
-      title: 'Products',
-      products,
-      path: '/products'
+      response.render('shop/product-list', {
+        title: 'Products',
+        products: rows,
+        path: '/products'
+      });
+
+    })
+    .catch((error) => {
+      console.log(error);
     });
-
-  });
 
 };
 
