@@ -3,16 +3,13 @@ const Cart = require('../models/cart');
 
 exports.getLandingPage = (request, response, next) => {
 
-  Product.getAllProducts()
-    .then((result) => {
-      const [rows, metadata] = result;
-
+  Product.findAll()
+    .then((products) => {
       response.render('shop/index', {
         title: 'My Amazing Shop',
-        products: rows,
+        products,
         path: '/'
       });
-
     })
     .catch((error) => {
       console.log(error);
@@ -22,16 +19,13 @@ exports.getLandingPage = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
-  Product.getAllProducts()
-    .then((result) => {
-      const [rows, metadata] = result;
-
+  Product.findAll()
+    .then((products) => {
       response.render('shop/product-list', {
         title: 'Products',
-        products: rows,
+        products,
         path: '/products'
       });
-
     })
     .catch((error) => {
       console.log(error);

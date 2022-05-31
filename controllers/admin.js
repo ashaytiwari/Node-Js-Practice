@@ -18,14 +18,17 @@ exports.postAddProducts = (request, response, next) => {
   const price = request.body.price;
   const description = request.body.description;
 
-  const product = new Product(null, title, imageURL, price, description);
-
-  product.save()
-    .then(() => {
+  Product.create({
+    title,
+    imageURL,
+    description,
+    price
+  })
+    .then((result) => {
+      console.log(result);
       response.redirect('/');
-    })
-    .catch((error) => {
-      console.log(error);
+    }).catch((error) => {
+      console.log(error)
     });
 
 }
