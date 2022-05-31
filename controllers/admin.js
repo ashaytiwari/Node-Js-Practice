@@ -90,14 +90,16 @@ exports.deleteProduct = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
-  Product.getAllProducts((products) => {
-
-    response.render('admin/products', {
-      title: 'Admin Products',
-      products,
-      path: '/admin/products'
+  Product.findAll()
+    .then((products) => {
+      response.render('admin/products', {
+        title: 'Admin Products',
+        products,
+        path: '/admin/products'
+      });
+    })
+    .catch((error) => {
+      console.log(error);
     });
-
-  });
 
 }

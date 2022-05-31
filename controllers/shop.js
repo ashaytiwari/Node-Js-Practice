@@ -37,14 +37,12 @@ exports.getProductDetails = (request, response, next) => {
 
   const productId = request.params.productId;
 
-  Product.findProductById(productId)
-    .then((result) => {
-
-      const [product] = result;
+  Product.findByPk(productId)
+    .then((product) => {
 
       response.render('shop/product-detail', {
-        title: product[0].title,
-        product: product[0],
+        title: product.title,
+        product,
         path: '/products'
       });
 
