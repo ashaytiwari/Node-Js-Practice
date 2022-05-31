@@ -98,10 +98,14 @@ exports.deleteProduct = (request, response, next) => {
 
   const productId = request.body.productId;
 
-  Product.deleteProductById(productId);
-
-  response.redirect('/admin/products');
-
+  Product.findByPk(productId)
+    .then((product) => {
+      return product.destroy();
+    })
+    .then((result) => {
+      response.redirect('/admin/products');
+    })
+    .catch((error) => console.log(error));
 
 }
 
