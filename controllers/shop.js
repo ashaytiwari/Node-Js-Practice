@@ -43,13 +43,23 @@ exports.getProductDetails = (request, response, next) => {
 
   const productId = request.params.productId;
 
-  Product.findProductById(productId, (product) => {
-    response.render('shop/product-detail', {
-      title: product.title,
-      product,
-      path: '/products'
+  Product.findProductById(productId)
+    .then((result) => {
+
+      const [product] = result;
+
+      response.render('shop/product-detail', {
+        title: product[0].title,
+        product: product[0],
+        path: '/products'
+      });
+
+    })
+    .catch((error) => {
+      console.log(error);
     });
-  });
+
+
 
 };
 

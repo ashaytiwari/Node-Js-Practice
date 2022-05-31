@@ -35,7 +35,11 @@ class Product {
 
   }
 
-  static findProductById() {
+  static findProductById(id) {
+
+    const result = db.execute('SELECT * FROM products WHERE products.id = ?', [id]);
+
+    return result;
 
   }
 
