@@ -9,7 +9,7 @@ const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 const errorsController = require('./controllers/errors');
-const db = require('./util/database');
+const sequelize = require('./util/database');
 
 const app = express();
 
@@ -31,7 +31,16 @@ app.use(shopRoutes);
 
 app.use(errorsController.get404page);
 
-app.listen(8000);
+// Syncing application models with sequelize mysql
+sequelize
+  .sync()
+  .then((result) => {
+    app.listen(8000);
+  })
+  .catch((error) => {
+    console.log(error);
+  });
+
 
 // additional configuration for nodemon so address already in use error didn't stuck
 process.once('SIGUSR2', function () {
