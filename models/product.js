@@ -14,6 +14,13 @@ class Product {
 
   save() {
 
+    const result = db.execute(
+      'INSERT INTO products (title, price, description, imageURL) VALUES (?, ?, ?, ?)',
+      [this.title, this.price, this.description, this.imageURL]
+    );
+
+    return result;
+
   }
 
   static deleteProductById(productId) {
@@ -22,9 +29,9 @@ class Product {
 
   static getAllProducts() {
 
-    const data = db.execute('SELECT * FROM products');
+    const result = db.execute('SELECT * FROM products');
 
-    return data;
+    return result;
 
   }
 

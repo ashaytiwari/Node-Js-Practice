@@ -20,9 +20,13 @@ exports.postAddProducts = (request, response, next) => {
 
   const product = new Product(null, title, imageURL, price, description);
 
-  product.save();
-
-  response.redirect('/');
+  product.save()
+    .then(() => {
+      response.redirect('/');
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
 }
 
