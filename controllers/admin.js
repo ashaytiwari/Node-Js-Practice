@@ -1,5 +1,9 @@
 const Product = require('../models/product');
 
+// For associated models sequelize will automatically added some magical methods.
+// User model is associated with Products model.
+// req.user contains methods for creating products, fetching products, destroy products etc.
+
 exports.getAddProducts = (request, response, next) => {
 
   response.render('admin/edit-product', {
@@ -75,6 +79,7 @@ exports.postEditProducts = (request, response, next) => {
   const imageURL = request.body.imageURL;
   const price = request.body.price;
   const description = request.body.description;
+  const userId = request.user.id;
 
   Product.findByPk(id)
     .then((product) => {
@@ -83,6 +88,7 @@ exports.postEditProducts = (request, response, next) => {
       product.imageURL = imageURL;
       product.price = price;
       product.description = description;
+      product.userId = userId;
 
       return product.save();
 
@@ -115,7 +121,7 @@ exports.deleteProduct = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
-  Product.findAll()
+  request.user.getProducts() //magical method of associated models
     .then((products) => {
       response.render('admin/products', {
         title: 'Admin Products',

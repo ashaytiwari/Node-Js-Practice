@@ -13,6 +13,8 @@ const sequelize = require('./util/database');
 
 const Product = require('./models/product');
 const User = require('./models/user');
+const Cart = require('./models/cart');
+const CartItem = require('./models/cart-item');
 
 const app = express();
 
@@ -40,11 +42,15 @@ app.use(errorsController.get404page);
 
 Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' })
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, { through: CartItem });
+Product.belongsToMany(Cart, { through: CartItem });
 
 // Syncing application models with sequelize mysql
 sequelize
-  // .sync({ force: true }) // {force: true} only for development mode to override the changes done. "Uncomment this line only when overriding is required (not always)"
-  .sync()
+  .sync({ force: true }) // {force: true} only for development mode to override the changes done. "Uncomment this line only when overriding is required (not always)"
+  // .sync()
   .then((result) => {
     return User.findByPk(1);
   })
