@@ -11,6 +11,9 @@ const shopRoutes = require('./routes/shop');
 const errorsController = require('./controllers/errors');
 const sequelize = require('./util/database');
 
+const Product = require('./models/product');
+const User = require('./models/user');
+
 const app = express();
 
 // registering external template engine to express application (for handlebars, as handlebars is not a built in template engine)
@@ -31,16 +34,18 @@ app.use(shopRoutes);
 
 app.use(errorsController.get404page);
 
+Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' })
+User.hasMany(Product);
+
 // Syncing application models with sequelize mysql
 sequelize
-  .sync()
+  .sync({ force: true }) // {force: true} only for development mode to override the changes done 
   .then((result) => {
     app.listen(8000);
   })
   .catch((error) => {
     console.log(error);
   });
-
 
 // additional configuration for nodemon so address already in use error didn't stuck
 process.once('SIGUSR2', function () {
