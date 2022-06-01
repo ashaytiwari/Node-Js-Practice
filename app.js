@@ -16,17 +16,21 @@ const User = require('./models/user');
 
 const app = express();
 
-// registering external template engine to express application (for handlebars, as handlebars is not a built in template engine)
-// uncomment below line if wanna use handlebars for template engine
-// app.engine('handlebars', expressHandlebars()); 
-
-// adding configuration to inform application that use pug as view engine
+// adding configuration to inform application that use ejs as view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((request, response, next) => {
+  User.findByPk(1)
+    .then((user) => {
+      request.user = user;
+      next();
+    }).catch((error) => console.log(error));
+});
 
 app.use('/admin', adminRoutes);
 
@@ -39,8 +43,23 @@ User.hasMany(Product);
 
 // Syncing application models with sequelize mysql
 sequelize
-  .sync({ force: true }) // {force: true} only for development mode to override the changes done 
+  // .sync({ force: true }) // {force: true} only for development mode to override the changes done. "Uncomment this line only when overriding is required (not always)"
+  .sync()
   .then((result) => {
+    return User.findByPk(1);
+  })
+  .then((user) => {
+    if (!user) {
+      return User.create({
+        name: 'Ashay',
+        email: 'ashay@test.com'
+      });
+    }
+
+    return user;
+
+  })
+  .then((user) => {
     app.listen(8000);
   })
   .catch((error) => {

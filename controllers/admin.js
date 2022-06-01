@@ -13,16 +13,20 @@ exports.getAddProducts = (request, response, next) => {
 
 exports.postAddProducts = (request, response, next) => {
 
-  const title = request.body.title;
-  const imageURL = request.body.imageURL;
-  const price = request.body.price;
-  const description = request.body.description;
+  const body = request.body;
+
+  const title = body.title;
+  const imageURL = body.imageURL;
+  const price = body.price;
+  const description = body.description;
+  const userId = request.user.id;
 
   Product.create({
     title,
     imageURL,
     description,
-    price
+    price,
+    userId
   })
     .then((result) => {
       console.log(result);
