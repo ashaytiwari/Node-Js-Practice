@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const Cart = require('../models/cart');
+const res = require('express/lib/response');
 
 exports.getLandingPage = (request, response, next) => {
 
@@ -82,21 +83,26 @@ exports.postCartDeleteProduct = (request, response, next) => {
 
   const productId = request.body.productId;
 
-  Product.findProductById(productId, (product) => {
-
-    Cart.deleteProductFromCart(productId, product.price);
-
-    response.redirect('/cart');
-
-  });
+  request.user.getCart()
+    .then((cart) => {
+      return cart.getProducts({ where: { id: productId } });
+    })
+    .then((products) => {
+      const product = products[0];
+      return product.cartItem.destroy();
+    })
+    .then(() => {
+      response.redirect('/cart');
+    })
+    .catch((error) => console.log(error));
 
 };
 
 exports.postCart = (request, response, next) => {
 
   const productId = request.body.productId;
-
   let fetchedCart;
+  let newQuantity = 1;
 
   request.user.getCart()
     .then((cart) => {
@@ -111,20 +117,19 @@ exports.postCart = (request, response, next) => {
         product = products[0];
       }
 
-      let newQuantity = 1;
-
       if (typeof product !== 'undefined') {
-
+        const oldQuantity = product.cartItem.quantity;
+        newQuantity = oldQuantity + 1;
+        return product;
       }
 
-      return Product.findByPk(productId)
-        .then((_product) => {
-          return fetchedCart.addProduct(_product, {
-            through: { quantity: newQuantity }
-          });
-        })
-        .catch((error) => console.log(error));
+      return Product.findByPk(productId);
 
+    })
+    .then((product) => {
+      return fetchedCart.addProduct(product, {
+        through: { quantity: newQuantity }
+      });
     })
     .then(() => {
       response.redirect('/cart');
