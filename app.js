@@ -15,6 +15,8 @@ const Product = require('./models/product');
 const User = require('./models/user');
 const Cart = require('./models/cart');
 const CartItem = require('./models/cart-item');
+const Order = require('./models/order');
+const OrderItem = require('./models/order-item');
 
 const app = express();
 
@@ -46,11 +48,15 @@ User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, { through: CartItem });
 Product.belongsToMany(Cart, { through: CartItem });
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, { through: OrderItem });
+Product.belongsToMany(Order, { through: OrderItem });
 
 // Syncing application models with sequelize mysql
 sequelize
-  // .sync({ force: true }) // {force: true} only for development mode to override the changes done. "Uncomment this line only when overriding is required (not always)"
-  .sync()
+  .sync({ force: true }) // {force: true} only for development mode to override the changes done. "Uncomment this line only when overriding is required (not always)"
+  // .sync()
   .then((result) => {
     return User.findByPk(1);
   })
@@ -66,14 +72,14 @@ sequelize
 
   })
   .then((user) => {
-    return user.getCart();
+    return { cart: user.getCart(), user };
   })
-  .then((cart) => {
-    if (!cart) {
-      return user.createCart();
+  .then((data) => {
+    if (!data.cart) {
+      return data.user.createCart();
     }
 
-    return cart;
+    return data.cart;
   })
   .then((cart) => {
     app.listen(8000);
