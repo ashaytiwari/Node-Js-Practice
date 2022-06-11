@@ -148,8 +148,11 @@ exports.getCheckout = (request, response, next) => {
 
 exports.postOrders = (request, response, next) => {
 
+  let fetchedCart;
+
   request.user.getCart()
     .then((cart) => {
+      fetchedCart = cart;
       return cart.getProducts();
     })
     .then((products) => {
@@ -164,6 +167,9 @@ exports.postOrders = (request, response, next) => {
         .catch((error) => console.log(error));
     })
     .then((result) => {
+      return fetchedCart.setProducts(null);
+    })
+    .then((result) => {
       response.redirect('/orders');
     })
     .catch((error) => console.log(error));
@@ -171,9 +177,15 @@ exports.postOrders = (request, response, next) => {
 
 exports.getOrders = (request, response, next) => {
 
-  response.render('shop/orders', {
-    title: 'Your Orders',
-    path: '/orders'
-  });
+  request.user.getOrders({ include: ['products'] })
+    .then((orders) => {
+      console.log(orders, 'orders');
+      response.render('shop/orders', {
+        title: 'Your Orders',
+        path: '/orders',
+        orders
+      });
+    })
+    .catch((error) => console.log(error));
 
 };
