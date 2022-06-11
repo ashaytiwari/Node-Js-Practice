@@ -1,6 +1,5 @@
 const Product = require('../models/product');
 const Cart = require('../models/cart');
-const res = require('express/lib/response');
 
 exports.getLandingPage = (request, response, next) => {
 
@@ -145,6 +144,29 @@ exports.getCheckout = (request, response, next) => {
     path: '/checkout'
   });
 
+};
+
+exports.postOrders = (request, response, next) => {
+
+  request.user.getCart()
+    .then((cart) => {
+      return cart.getProducts();
+    })
+    .then((products) => {
+
+      return request.user.createOrder()
+        .then((order) => {
+          return order.addProducts(products.map((product) => {
+            product.orderItem = { quantity: product.cartItem.quantity }
+            return product;
+          }))
+        })
+        .catch((error) => console.log(error));
+    })
+    .then((result) => {
+      response.redirect('/orders');
+    })
+    .catch((error) => console.log(error));
 };
 
 exports.getOrders = (request, response, next) => {

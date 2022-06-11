@@ -55,8 +55,8 @@ Product.belongsToMany(Order, { through: OrderItem });
 
 // Syncing application models with sequelize mysql
 sequelize
-  .sync({ force: true }) // {force: true} only for development mode to override the changes done. "Uncomment this line only when overriding is required (not always)"
-  // .sync()
+  // .sync({ force: true }) // {force: true} only for development mode to override the changes done. "Uncomment this line only when overriding is required (not always)"
+  .sync()
   .then((result) => {
     return User.findByPk(1);
   })
@@ -72,14 +72,14 @@ sequelize
 
   })
   .then((user) => {
-    return { cart: user.getCart(), user };
-  })
-  .then((data) => {
-    if (!data.cart) {
-      return data.user.createCart();
-    }
+    user.getCart().then((cart) => {
+      if (!cart) {
+        return user.createCart();
+      }
 
-    return data.cart;
+      return cart;
+    })
+      .catch((error) => console.log(error));
   })
   .then((cart) => {
     app.listen(8000);
