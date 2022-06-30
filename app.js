@@ -3,20 +3,13 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const expressHandlebars = require('express-handlebars');
 
-const adminRoutes = require('./routes/admin');
-const shopRoutes = require('./routes/shop');
+// const adminRoutes = require('./routes/admin');
+// const shopRoutes = require('./routes/shop');
 
 const errorsController = require('./controllers/errors');
-const sequelize = require('./util/database');
 
-const Product = require('./models/product');
-const User = require('./models/user');
-const Cart = require('./models/cart');
-const CartItem = require('./models/cart-item');
-const Order = require('./models/order');
-const OrderItem = require('./models/order-item');
+const mongoConnect = require('./util/database');
 
 const app = express();
 
@@ -29,64 +22,23 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((request, response, next) => {
-  User.findByPk(1)
-    .then((user) => {
-      request.user = user;
-      next();
-    }).catch((error) => console.log(error));
+  // User.findByPk(1)
+  //   .then((user) => {
+  //     request.user = user;
+  //     next();
+  //   }).catch((error) => console.log(error));
 });
 
-app.use('/admin', adminRoutes);
+// app.use('/admin', adminRoutes);
 
-app.use(shopRoutes);
+// app.use(shopRoutes);
 
 app.use(errorsController.get404page);
 
-Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' })
-User.hasMany(Product);
-User.hasOne(Cart);
-Cart.belongsTo(User);
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
-Order.belongsTo(User);
-User.hasMany(Order);
-Order.belongsToMany(Product, { through: OrderItem });
-Product.belongsToMany(Order, { through: OrderItem });
-
-// Syncing application models with sequelize mysql
-sequelize
-  // .sync({ force: true }) // {force: true} only for development mode to override the changes done. "Uncomment this line only when overriding is required (not always)"
-  .sync()
-  .then((result) => {
-    return User.findByPk(1);
-  })
-  .then((user) => {
-    if (!user) {
-      return User.create({
-        name: 'Ashay',
-        email: 'ashay@test.com'
-      });
-    }
-
-    return user;
-
-  })
-  .then((user) => {
-    user.getCart().then((cart) => {
-      if (!cart) {
-        return user.createCart();
-      }
-
-      return cart;
-    })
-      .catch((error) => console.log(error));
-  })
-  .then((cart) => {
-    app.listen(8000);
-  })
-  .catch((error) => {
-    console.log(error);
-  });
+mongoConnect((client) => {
+  console.log(client);
+  app.listen(8000);
+});
 
 // additional configuration for nodemon so address already in use error didn't stuck
 process.once('SIGUSR2', function () {
