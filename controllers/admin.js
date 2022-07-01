@@ -1,9 +1,5 @@
 const Product = require('../models/product');
 
-// For associated models sequelize will automatically added some magical methods.
-// User model is associated with Products model.
-// req.user contains methods for creating products, fetching products, destroy products etc.
-
 exports.getAddProducts = (request, response, next) => {
 
   response.render('admin/edit-product', {
@@ -23,15 +19,10 @@ exports.postAddProducts = (request, response, next) => {
   const imageURL = body.imageURL;
   const price = body.price;
   const description = body.description;
-  const userId = request.user.id;
+  const product = new Product(title, imageURL, price, description);
 
-  Product.create({
-    title,
-    imageURL,
-    description,
-    price,
-    userId
-  })
+  product
+    .save()
     .then((result) => {
       console.log(result);
       response.redirect('/');
@@ -41,96 +32,96 @@ exports.postAddProducts = (request, response, next) => {
 
 }
 
-exports.getEditProducts = (request, response, next) => {
+// exports.getEditProducts = (request, response, next) => {
 
-  const editMode = request.query.edit;
+//   const editMode = request.query.edit;
 
-  if (!editMode) {
-    return response.redirect('/');
-  }
+//   if (!editMode) {
+//     return response.redirect('/');
+//   }
 
-  const productId = request.params.productId;
+//   const productId = request.params.productId;
 
-  Product.findByPk(productId)
-    .then((product) => {
+//   Product.findByPk(productId)
+//     .then((product) => {
 
-      if (!product) {
-        return response.redirect('/');
-      }
+//       if (!product) {
+//         return response.redirect('/');
+//       }
 
-      response.render('admin/edit-product', {
-        title: 'Edit Product',
-        path: '/admin/edit-product',
-        editing: editMode,
-        product
-      });
+//       response.render('admin/edit-product', {
+//         title: 'Edit Product',
+//         path: '/admin/edit-product',
+//         editing: editMode,
+//         product
+//       });
 
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
 
-};
+// };
 
-exports.postEditProducts = (request, response, next) => {
+// exports.postEditProducts = (request, response, next) => {
 
-  const id = request.body.productId;
-  const title = request.body.title;
-  const imageURL = request.body.imageURL;
-  const price = request.body.price;
-  const description = request.body.description;
-  const userId = request.user.id;
+//   const id = request.body.productId;
+//   const title = request.body.title;
+//   const imageURL = request.body.imageURL;
+//   const price = request.body.price;
+//   const description = request.body.description;
+//   const userId = request.user.id;
 
-  Product.findByPk(id)
-    .then((product) => {
+//   Product.findByPk(id)
+//     .then((product) => {
 
-      product.title = title;
-      product.imageURL = imageURL;
-      product.price = price;
-      product.description = description;
-      product.userId = userId;
+//       product.title = title;
+//       product.imageURL = imageURL;
+//       product.price = price;
+//       product.description = description;
+//       product.userId = userId;
 
-      return product.save();
+//       return product.save();
 
-    })
-    .then((result) => {
+//     })
+//     .then((result) => {
 
-      console.log('Updated Product');
+//       console.log('Updated Product');
 
-      response.redirect('/admin/products');
+//       response.redirect('/admin/products');
 
-    })
-    .catch((error) => console.log(error));
+//     })
+//     .catch((error) => console.log(error));
 
-}
+// }
 
-exports.deleteProduct = (request, response, next) => {
+// exports.deleteProduct = (request, response, next) => {
 
-  const productId = request.body.productId;
+//   const productId = request.body.productId;
 
-  Product.findByPk(productId)
-    .then((product) => {
-      return product.destroy();
-    })
-    .then((result) => {
-      response.redirect('/admin/products');
-    })
-    .catch((error) => console.log(error));
+//   Product.findByPk(productId)
+//     .then((product) => {
+//       return product.destroy();
+//     })
+//     .then((result) => {
+//       response.redirect('/admin/products');
+//     })
+//     .catch((error) => console.log(error));
 
-}
+// }
 
-exports.getProducts = (request, response, next) => {
+// exports.getProducts = (request, response, next) => {
 
-  request.user.getProducts() //magical method of associated models
-    .then((products) => {
-      response.render('admin/products', {
-        title: 'Admin Products',
-        products,
-        path: '/admin/products'
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+//   request.user.getProducts() //magical method of associated models
+//     .then((products) => {
+//       response.render('admin/products', {
+//         title: 'Admin Products',
+//         products,
+//         path: '/admin/products'
+//       });
+//     })
+//     .catch((error) => {
+//       console.log(error);
+//     });
 
-}
+// }
