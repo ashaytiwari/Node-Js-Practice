@@ -11,6 +11,8 @@ const errorsController = require('./controllers/errors');
 
 const mongoConnect = require('./util/database').mongoConnect;
 
+const User = require('./models/user');
+
 const app = express();
 
 // adding configuration to inform application that use ejs as view engine
@@ -22,12 +24,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((request, response, next) => {
-  // User.findByPk(1)
-  //   .then((user) => {
-  //     request.user = user;
-  //     next();
-  //   }).catch((error) => console.log(error));
-  next();
+
+  User.findById('62c043fa033014cecb9627d9')
+    .then((user) => {
+      request.user = user;
+      next();
+    }).catch((error) => console.log(error));
+
 });
 
 app.use('/admin', adminRoutes);

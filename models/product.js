@@ -4,12 +4,13 @@ const getDB = require('../util/database').getDB;
 
 class Product {
 
-  constructor(title, price, imageURL, description, id) {
+  constructor(title, price, imageURL, description, id, userId) {
     this.title = title.trim();
     this.price = price.trim();
     this.imageURL = imageURL.trim();
     this.description = description.trim();
-    this._id = id ? mongodb.ObjectId(id) : undefined;
+    this._id = id ? mongodb.ObjectId(id) : null;
+    this.userId = userId
   }
 
   save() {
@@ -17,7 +18,7 @@ class Product {
     const db = getDB();
     let dbOperation;
 
-    if (typeof this._id !== 'undefined') {
+    if (this._id !== null) {
       dbOperation = db.collection('products').updateOne({ _id: this._id }, { $set: this });
     } else {
       dbOperation = db.collection('products').insertOne(this);
