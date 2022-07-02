@@ -1,3 +1,5 @@
+const mongodb = require('mongodb');
+
 const Product = require('../models/product');
 
 exports.getAddProducts = (request, response, next) => {
@@ -18,7 +20,7 @@ exports.postAddProducts = (request, response, next) => {
   const title = body.title;
   const imageURL = body.imageURL;
   const price = body.price;
-  const description = body.description.trim();
+  const description = body.description;
   const product = new Product(title, price, imageURL, description);
 
   product
@@ -32,68 +34,58 @@ exports.postAddProducts = (request, response, next) => {
 
 }
 
-// exports.getEditProducts = (request, response, next) => {
+exports.getEditProducts = (request, response, next) => {
 
-//   const editMode = request.query.edit;
+  const editMode = request.query.edit;
 
-//   if (!editMode) {
-//     return response.redirect('/');
-//   }
+  if (!editMode) {
+    return response.redirect('/');
+  }
 
-//   const productId = request.params.productId;
+  const productId = request.params.productId;
 
-//   Product.findByPk(productId)
-//     .then((product) => {
+  Product.findById(productId)
+    .then((product) => {
 
-//       if (!product) {
-//         return response.redirect('/');
-//       }
+      if (!product) {
+        return response.redirect('/');
+      }
 
-//       response.render('admin/edit-product', {
-//         title: 'Edit Product',
-//         path: '/admin/edit-product',
-//         editing: editMode,
-//         product
-//       });
+      response.render('admin/edit-product', {
+        title: 'Edit Product',
+        path: '/admin/edit-product',
+        editing: editMode,
+        product
+      });
 
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
-// };
+};
 
-// exports.postEditProducts = (request, response, next) => {
+exports.postEditProducts = (request, response, next) => {
 
-//   const id = request.body.productId;
-//   const title = request.body.title;
-//   const imageURL = request.body.imageURL;
-//   const price = request.body.price;
-//   const description = request.body.description;
-//   const userId = request.user.id;
+  const id = request.body.productId;
+  const title = request.body.title;
+  const imageURL = request.body.imageURL;
+  const price = request.body.price;
+  const description = request.body.description;
 
-//   Product.findByPk(id)
-//     .then((product) => {
+  const product = new Product(title, price, imageURL, description, id);
 
-//       product.title = title;
-//       product.imageURL = imageURL;
-//       product.price = price;
-//       product.description = description;
-//       product.userId = userId;
+  product.save()
+    .then((result) => {
 
-//       return product.save();
+      console.log('Updated Product');
 
-//     })
-//     .then((result) => {
+      response.redirect('/admin/products');
 
-//       console.log('Updated Product');
+    })
+    .catch((error) => console.log(error));
 
-//       response.redirect('/admin/products');
-
-//     })
-//     .catch((error) => console.log(error));
-
-// }
+}
 
 // exports.deleteProduct = (request, response, next) => {
 
@@ -110,18 +102,18 @@ exports.postAddProducts = (request, response, next) => {
 
 // }
 
-// exports.getProducts = (request, response, next) => {
+exports.getProducts = (request, response, next) => {
 
-//   request.user.getProducts() //magical method of associated models
-//     .then((products) => {
-//       response.render('admin/products', {
-//         title: 'Admin Products',
-//         products,
-//         path: '/admin/products'
-//       });
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
+  Product.fetchAll()
+    .then((products) => {
+      response.render('admin/products', {
+        title: 'Admin Products',
+        products,
+        path: '/admin/products'
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
-// }
+}
