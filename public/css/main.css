@@ -208,6 +208,10 @@ form {
   color: white;
 }
 
+.product_detail_image{
+  max-width: 400px;
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;

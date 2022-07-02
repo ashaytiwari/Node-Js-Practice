@@ -33,27 +33,25 @@ exports.getProducts = (request, response, next) => {
 
 };
 
-// exports.getProductDetails = (request, response, next) => {
+exports.getProductDetails = (request, response, next) => {
 
-//   const productId = request.params.productId;
+  const productId = request.params.productId;
 
-//   Product.findByPk(productId)
-//     .then((product) => {
+  Product.findById(productId)
+    .then((product) => {
 
-//       response.render('shop/product-detail', {
-//         title: product.title,
-//         product,
-//         path: '/products'
-//       });
+      response.render('shop/product-detail', {
+        title: product.title,
+        product,
+        path: '/products'
+      });
 
-//     })
-//     .catch((error) => {
-//       console.log(error);
-//     });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
-
-
-// };
+};
 
 // exports.getCart = (request, response, next) => {
 
