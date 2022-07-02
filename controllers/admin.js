@@ -18,8 +18,8 @@ exports.postAddProducts = (request, response, next) => {
   const title = body.title;
   const imageURL = body.imageURL;
   const price = body.price;
-  const description = body.description;
-  const product = new Product(title, imageURL, price, description);
+  const description = body.description.trim();
+  const product = new Product(title, price, imageURL, description);
 
   product
     .save()
