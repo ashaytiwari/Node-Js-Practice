@@ -87,20 +87,17 @@ exports.postEditProducts = (request, response, next) => {
 
 }
 
-// exports.deleteProduct = (request, response, next) => {
+exports.deleteProduct = (request, response, next) => {
 
-//   const productId = request.body.productId;
+  const productId = request.body.productId;
 
-//   Product.findByPk(productId)
-//     .then((product) => {
-//       return product.destroy();
-//     })
-//     .then((result) => {
-//       response.redirect('/admin/products');
-//     })
-//     .catch((error) => console.log(error));
+  Product.deleteById(productId)
+    .then((result) => {
+      response.redirect('/admin/products');
+    })
+    .catch((error) => console.log(error));
 
-// }
+}
 
 exports.getProducts = (request, response, next) => {
 

@@ -9,7 +9,7 @@ class Product {
     this.price = price.trim();
     this.imageURL = imageURL.trim();
     this.description = description.trim();
-    this._id = mongodb.ObjectId(id);
+    this._id = id ? mongodb.ObjectId(id) : undefined;
   }
 
   save() {
@@ -58,6 +58,20 @@ class Product {
       })
       .catch((error) => console.log(error));
 
+  }
+
+  static deleteById(id) {
+
+    const db = getDB();
+
+    const objectId = new mongodb.ObjectId(id);
+
+    return db.collection('products')
+      .deleteOne({ _id: objectId })
+      .then(() => {
+        console.log('Product deleted');
+      })
+      .catch((error) => console.log(error));
   }
 
 }
