@@ -95,45 +95,54 @@ exports.getProductDetails = (request, response, next) => {
 
 // };
 
-// exports.postCart = (request, response, next) => {
+exports.postCart = (request, response, next) => {
 
-//   const productId = request.body.productId;
-//   let fetchedCart;
-//   let newQuantity = 1;
+  const productId = request.body.productId;
 
-//   request.user.getCart()
-//     .then((cart) => {
-//       fetchedCart = cart;
-//       return cart.getProducts({ where: { id: productId } });
-//     })
-//     .then((products) => {
+  Product.findById(productId)
+    .then((product) => {
+      return request.user.addToCart(product);
+    })
+    .then((result) => {
+      console.log(result);
+    });
 
-//       let product;
+  // let fetchedCart;
+  // let newQuantity = 1;
 
-//       if (products.length > 0) {
-//         product = products[0];
-//       }
+  // request.user.getCart()
+  //   .then((cart) => {
+  //     fetchedCart = cart;
+  //     return cart.getProducts({ where: { id: productId } });
+  //   })
+  //   .then((products) => {
 
-//       if (typeof product !== 'undefined') {
-//         const oldQuantity = product.cartItem.quantity;
-//         newQuantity = oldQuantity + 1;
-//         return product;
-//       }
+  //     let product;
 
-//       return Product.findByPk(productId);
+  //     if (products.length > 0) {
+  //       product = products[0];
+  //     }
 
-//     })
-//     .then((product) => {
-//       return fetchedCart.addProduct(product, {
-//         through: { quantity: newQuantity }
-//       });
-//     })
-//     .then(() => {
-//       response.redirect('/cart');
-//     })
-//     .catch((error) => console.log(error));
+  //     if (typeof product !== 'undefined') {
+  //       const oldQuantity = product.cartItem.quantity;
+  //       newQuantity = oldQuantity + 1;
+  //       return product;
+  //     }
 
-// };
+  //     return Product.findByPk(productId);
+
+  //   })
+  //   .then((product) => {
+  //     return fetchedCart.addProduct(product, {
+  //       through: { quantity: newQuantity }
+  //     });
+  //   })
+  //   .then(() => {
+  //     response.redirect('/cart');
+  //   })
+  //   .catch((error) => console.log(error));
+
+};
 
 // exports.getCheckout = (request, response, next) => {
 
