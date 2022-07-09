@@ -1,6 +1,7 @@
 const mongodb = require('mongodb');
 
 const { getDB } = require("../util/database");
+const Product = require('./product');
 
 class User {
 
@@ -50,6 +51,23 @@ class User {
         {
           $set: { cart: updatedCart }
         });
+
+  }
+
+  async getCart() {
+
+    const products = [];
+
+    for (let cartItem of this.cart.items) {
+
+      let product = await Product.findById(cartItem.productId);
+      product.quantity = cartItem.quantity;
+
+      products.push(product);
+
+    }
+
+    return products;
 
   }
 

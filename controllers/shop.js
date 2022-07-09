@@ -53,28 +53,21 @@ exports.getProductDetails = (request, response, next) => {
 
 };
 
-// exports.getCart = (request, response, next) => {
+exports.getCart = (request, response, next) => {
 
-//   request.user.getCart()
-//     .then((cart) => {
-//       console.log(cart, 'cart');
+  request.user.getCart()
+    .then((products) => {
+      response.render('shop/cart', {
+        title: 'Your Cart',
+        path: '/cart',
+        products
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 
-//       return cart.getProducts()
-//         .then((products) => {
-//           response.render('shop/cart', {
-//             title: 'Your Cart',
-//             path: '/cart',
-//             products
-//           });
-//         })
-//         .catch((error) => {
-//           console.log(error);
-//         });
-
-//     })
-//     .catch((error) => console.log(error));
-
-// };
+};
 
 // exports.postCartDeleteProduct = (request, response, next) => {
 
