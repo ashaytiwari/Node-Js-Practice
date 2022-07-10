@@ -97,7 +97,7 @@ exports.postCart = (request, response, next) => {
       return request.user.addToCart(product);
     })
     .then((result) => {
-      console.log(result);
+      response.redirect('/cart');
     });
 
   // let fetchedCart;
