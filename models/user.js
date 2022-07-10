@@ -1,6 +1,7 @@
 const mongodb = require('mongodb');
 
 const { getDB } = require("../util/database");
+
 const Product = require('./product');
 
 class User {
@@ -108,6 +109,24 @@ class User {
     });
 
     return product.quantity;
+
+  }
+
+  deleteCartItemById(id) {
+
+    const updatedCart = this.cart.items.filter((item) => {
+      return item.productId.toString() !== id.toString();
+    });
+
+    const db = getDB();
+
+    return db
+      .collection('users')
+      .updateOne(
+        { _id: new mongodb.ObjectId(this._id) },
+        {
+          $set: { cart: { items: updatedCart } }
+        });
 
   }
 
