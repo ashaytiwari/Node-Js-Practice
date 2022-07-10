@@ -56,18 +56,58 @@ class User {
 
   async getCart() {
 
-    const products = [];
+    // one way to fetch carts:
+    // const products = [];
 
-    for (let cartItem of this.cart.items) {
+    // for (let cartItem of this.cart.items) {
 
-      let product = await Product.findById(cartItem.productId);
-      product.quantity = cartItem.quantity;
+    //   let product = await Product.findById(cartItem.productId);
+    //   product.quantity = cartItem.quantity;
 
-      products.push(product);
+    //   products.push(product);
 
-    }
+    // }
+
+    // return products;
+
+    //another way to fetch carts:
+    const db = getDB();
+
+    const cartItemIds = this.cart.items.map((item) => {
+      return item.productId;
+    });
+
+    return db
+      .collection('products')
+      .find({ _id: { $in: cartItemIds } })
+      .toArray()
+      .then((products) => {
+        return this.parseProductsDataWithQuantity(products);
+      })
+      .catch((error) => console.log(error));
+
+  }
+
+  parseProductsDataWithQuantity(_products) {
+
+    const products = _products.map((product) => {
+      return {
+        ...product,
+        quantity: this.findProductQuantityById(product._id)
+      }
+    });
 
     return products;
+
+  }
+
+  findProductQuantityById(id) {
+
+    const product = this.cart.items.find((item) => {
+      return item.productId.toString() === id.toString();
+    });
+
+    return product.quantity;
 
   }
 
