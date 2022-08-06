@@ -28,9 +28,13 @@ class User {
 
   addToCart(product) {
 
-    const productIndex = this.cart.items.findIndex((_product) => {
-      return _product.productId.toString() === product._id.toString();
-    });
+    let productIndex = -1;
+
+    if (this.cart.items.length !== 0) {
+      productIndex = this.cart.items.findIndex((_product) => {
+        return _product.productId.toString() === product._id.toString();
+      });
+    }
 
     const updatedCartItems = [...this.cart.items];
     let quantity = 1;
@@ -43,6 +47,13 @@ class User {
     }
 
     const updatedCart = { items: updatedCartItems };
+
+    return this.updateCart(updatedCart);
+
+  }
+
+  updateCart(cart) {
+
     const db = getDB();
 
     return db
@@ -50,7 +61,7 @@ class User {
       .updateOne(
         { _id: new mongodb.ObjectId(this._id) },
         {
-          $set: { cart: updatedCart }
+          $set: { cart }
         });
 
   }
@@ -114,19 +125,13 @@ class User {
 
   deleteCartItemById(id) {
 
-    const updatedCart = this.cart.items.filter((item) => {
+    const updatedCartItems = this.cart.items.filter((item) => {
       return item.productId.toString() !== id.toString();
     });
 
-    const db = getDB();
+    const updatedCart = { items: updatedCartItems };
 
-    return db
-      .collection('users')
-      .updateOne(
-        { _id: new mongodb.ObjectId(this._id) },
-        {
-          $set: { cart: { items: updatedCart } }
-        });
+    return this.updateCart(updatedCart);
 
   }
 
@@ -142,6 +147,41 @@ class User {
       })
       .catch((error) => console.log(error));
 
+  }
+
+  addOrder() {
+
+    const db = getDB();
+
+    return this.getCart()
+      .then((products) => {
+
+        const order = {
+          items: products,
+          user: {
+            _id: this._id
+          }
+        };
+
+        return db.collection('orders').insertOne(order);
+
+      })
+      .then((result) => {
+
+        this.cart = { items: [] };
+
+        return this.updateCart({ items: [] });
+
+      })
+      .catch((error) => console.log(error));
+
+  }
+
+  getOrders() {
+
+    const db = getDB();
+
+    return db.collection('orders')
   }
 
 }
