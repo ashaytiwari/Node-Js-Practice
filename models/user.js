@@ -182,6 +182,13 @@ class User {
     const db = getDB();
 
     return db.collection('orders')
+      .find({ 'user._id': new mongodb.ObjectId(this._id) })
+      .toArray()
+      .then((orders) => {
+        return orders;
+      })
+      .catch((error) => console.log(error));
+
   }
 
 }

@@ -113,17 +113,16 @@ exports.postOrders = (request, response, next) => {
     .catch((error) => console.log(error));
 };
 
-// exports.getOrders = (request, response, next) => {
+exports.getOrders = (request, response, next) => {
 
-//   request.user.getOrders({ include: ['products'] })
-//     .then((orders) => {
-//       console.log(orders, 'orders');
-//       response.render('shop/orders', {
-//         title: 'Your Orders',
-//         path: '/orders',
-//         orders
-//       });
-//     })
-//     .catch((error) => console.log(error));
+  request.user.getOrders()
+    .then((orders) => {
+      response.render('shop/orders', {
+        title: 'Your Orders',
+        path: '/orders',
+        orders
+      });
+    })
+    .catch((error) => console.log(error));
 
-// };
+};
