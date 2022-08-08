@@ -3,13 +3,12 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 const errorsController = require('./controllers/errors');
-
-const mongoConnect = require('./util/database').mongoConnect;
 
 const User = require('./models/user');
 
@@ -39,9 +38,14 @@ app.use(shopRoutes);
 
 app.use(errorsController.get404page);
 
-mongoConnect(() => {
-  app.listen(8000);
-});
+mongoose.connect(
+  'mongodb+srv://ashaytiwari:pJrtOMROPgB1z80O@cluster0.k9sp9pl.mongodb.net/bookshop?retryWrites=true&w=majority'
+)
+  .then(() => {
+    console.log('connected to a database');
+    app.listen(8000);
+  })
+  .catch((error) => console.log(error, 'Database connection error'));
 
 // additional configuration for nodemon so address already in use error didn't stuck
 process.once('SIGUSR2', function () {
