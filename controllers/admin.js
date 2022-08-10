@@ -17,11 +17,14 @@ exports.postAddProducts = (request, response, next) => {
 
   const body = request.body;
 
-  const title = body.title;
-  const imageURL = body.imageURL;
-  const price = body.price;
-  const description = body.description;
-  const product = new Product(title, price, imageURL, description, null, request.user._id);
+  const productData = {
+    title: body.title,
+    imageURL: body.imageURL,
+    price: body.price,
+    description: body.description
+  };
+
+  const product = new Product(productData);
 
   product
     .save()

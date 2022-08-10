@@ -12,7 +12,7 @@ const shopRoutes = require('./routes/shop');
 
 const errorsController = require('./controllers/errors');
 
-const User = require('./models/user');
+// const User = require('./models/user');
 
 const app = express();
 

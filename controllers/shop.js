@@ -3,7 +3,7 @@ const Product = require('../models/product');
 
 exports.getLandingPage = (request, response, next) => {
 
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       response.render('shop/index', {
         title: 'My Amazing Shop',
@@ -19,7 +19,7 @@ exports.getLandingPage = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       response.render('shop/product-list', {
         title: 'Products',
