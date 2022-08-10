@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const http = require('http');
 const path = require('path');
 
@@ -22,28 +24,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use((request, response, next) => {
-
-  User.findById('62c043fa033014cecb9627d9')
-    .then((user) => {
-      request.user = new User(user.name, user.email, user.cart, user._id);
-      next();
-    }).catch((error) => console.log(error));
-
-});
-
 app.use('/admin', adminRoutes);
 
 app.use(shopRoutes);
 
 app.use(errorsController.get404page);
 
-mongoose.connect(
-  'mongodb+srv://ashaytiwari:pJrtOMROPgB1z80O@cluster0.k9sp9pl.mongodb.net/bookshop?retryWrites=true&w=majority'
-)
+const mongodbConnectionString = process.env.MONGODB_CONNECTION_STRING;
+const serverPort = process.env.SERVER_PORT;
+
+mongoose.connect(mongodbConnectionString)
   .then(() => {
     console.log('connected to a database');
-    app.listen(8000);
+    app.listen(serverPort);
   })
   .catch((error) => console.log(error, 'Database connection error'));
 
@@ -57,4 +50,4 @@ process.on('SIGINT', function () {
   process.kill(process.pid, 'SIGINT');
 });
 
-console.log('server is listening on port 8000');
+console.log(`server is listening on port ${serverPort}`);
