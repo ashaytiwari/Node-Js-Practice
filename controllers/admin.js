@@ -76,9 +76,17 @@ exports.postEditProducts = (request, response, next) => {
   const price = request.body.price;
   const description = request.body.description;
 
-  const product = new Product(title, price, imageURL, description, id);
+  Product.findById(id)
+    .then((product) => {
 
-  product.save()
+      product.title = title;
+      product.imageURL = imageURL;
+      product.price = price;
+      product.description = description;
+
+      return product.save();
+
+    })
     .then((result) => {
 
       console.log('Updated Product');
@@ -94,7 +102,7 @@ exports.deleteProduct = (request, response, next) => {
 
   const productId = request.body.productId;
 
-  Product.deleteById(productId)
+  Product.findByIdAndRemove(productId)
     .then((result) => {
       response.redirect('/admin/products');
     })
@@ -104,7 +112,7 @@ exports.deleteProduct = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
-  Product.fetchAll()
+  Product.find()
     .then((products) => {
       response.render('admin/products', {
         title: 'Admin Products',
