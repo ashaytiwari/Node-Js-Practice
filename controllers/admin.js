@@ -21,7 +21,8 @@ exports.postAddProducts = (request, response, next) => {
     title: body.title,
     imageURL: body.imageURL,
     price: body.price,
-    description: body.description
+    description: body.description,
+    userId: request.user._id
   };
 
   const product = new Product(productData);
@@ -29,7 +30,6 @@ exports.postAddProducts = (request, response, next) => {
   product
     .save()
     .then((result) => {
-      console.log(result);
       response.redirect('/');
     }).catch((error) => {
       console.log(error)
