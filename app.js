@@ -12,7 +12,7 @@ const shopRoutes = require('./routes/shop');
 
 const errorsController = require('./controllers/errors');
 
-// const User = require('./models/user');
+const User = require('./models/user');
 
 const app = express();
 
@@ -23,6 +23,15 @@ app.set('views', 'views');
 app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use((request, response, next) => {
+  User.findById('62f519fec335821558216119')
+    .then((user) => {
+      request.user = user;
+      next();
+    })
+    .catch((error) => console.log(error));
+})
 
 app.use('/admin', adminRoutes);
 
@@ -35,8 +44,29 @@ const serverPort = process.env.SERVER_PORT;
 
 mongoose.connect(mongodbConnectionString)
   .then(() => {
-    console.log('connected to a database');
-    app.listen(serverPort);
+
+    User.findOne()
+      .then((user) => {
+
+        if (user !== null) {
+          return;
+        }
+
+        const _user = new User({
+          name: 'Ashay',
+          email: 'ashay@kritin.in',
+          cart: {
+            items: []
+          }
+        });
+
+        return _user.save();
+
+      })
+      .then(() => {
+        console.log('connected to a database');
+        app.listen(serverPort);
+      })
   })
   .catch((error) => console.log(error, 'Database connection error'));
 
