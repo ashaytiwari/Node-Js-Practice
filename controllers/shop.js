@@ -1,5 +1,7 @@
 const Product = require('../models/product');
 
+const { parseCartItemsData } = require('./utilities');
+
 exports.getLandingPage = (request, response, next) => {
 
   Product.find()
@@ -54,13 +56,18 @@ exports.getProductDetails = (request, response, next) => {
 
 exports.getCart = (request, response, next) => {
 
-  request.user.getCart()
-    .then((products) => {
+  request.user
+    .populate('cart.items.productId')
+    .then((user) => {
+
+      const products = parseCartItemsData(user.cart.items);
+
       response.render('shop/cart', {
         title: 'Your Cart',
         path: '/cart',
         products
       });
+
     })
     .catch((error) => {
       console.log(error);
