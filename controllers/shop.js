@@ -1,6 +1,7 @@
+const Order = require('../models/order');
 const Product = require('../models/product');
 
-const { parseCartItemsData } = require('./utilities');
+const { parseOrdersData, parseCartItemsData } = require('./utilities');
 
 exports.getLandingPage = (request, response, next) => {
 
@@ -112,11 +113,33 @@ exports.postCart = (request, response, next) => {
 
 exports.postOrders = (request, response, next) => {
 
-  request.user.addOrder()
-    .then((result) => {
+  request.user
+    .populate('cart.items.productId')
+    .then((user) => {
+
+      const products = parseOrdersData(user.cart.items);
+
+      const orderData = {
+        user: {
+          name: request.user.name,
+          userId: request.user._id
+        },
+        products
+      };
+
+      const order = new Order(orderData);
+
+      return order.save();
+
+    })
+    .then(() => {
+      return request.user.clearCart();
+    })
+    .then(() => {
       response.redirect('/orders');
     })
     .catch((error) => console.log(error));
+
 };
 
 exports.getOrders = (request, response, next) => {
