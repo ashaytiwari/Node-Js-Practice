@@ -146,7 +146,6 @@ exports.getOrders = (request, response, next) => {
 
   Order.find({ 'user.userId': request.user._id })
     .then((orders) => {
-      console.log(orders);
       response.render('shop/orders', {
         title: 'Your Orders',
         path: '/orders',
