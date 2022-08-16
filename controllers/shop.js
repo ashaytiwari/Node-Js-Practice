@@ -5,12 +5,15 @@ const { parseOrdersData, parseCartItemsData } = require('./utilities');
 
 exports.getLandingPage = (request, response, next) => {
 
+  const authenticated = true
+
   Product.find()
     .then((products) => {
       response.render('shop/index', {
         title: 'My Amazing Shop',
         products,
-        path: '/'
+        path: '/',
+        authenticated
       });
     })
     .catch((error) => {
@@ -21,12 +24,15 @@ exports.getLandingPage = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
+  const authenticated = true
+
   Product.find()
     .then((products) => {
       response.render('shop/product-list', {
         title: 'Products',
         products,
-        path: '/products'
+        path: '/products',
+        authenticated
       });
     })
     .catch((error) => {
@@ -38,6 +44,7 @@ exports.getProducts = (request, response, next) => {
 exports.getProductDetails = (request, response, next) => {
 
   const productId = request.params.productId;
+  const authenticated = true
 
   Product.findById(productId)
     .then((product) => {
@@ -45,7 +52,8 @@ exports.getProductDetails = (request, response, next) => {
       response.render('shop/product-detail', {
         title: product.title,
         product,
-        path: '/products'
+        path: '/products',
+        authenticated
       });
 
     })
@@ -57,6 +65,8 @@ exports.getProductDetails = (request, response, next) => {
 
 exports.getCart = (request, response, next) => {
 
+  const authenticated = true
+
   request.user
     .populate('cart.items.productId')
     .then((user) => {
@@ -66,7 +76,8 @@ exports.getCart = (request, response, next) => {
       response.render('shop/cart', {
         title: 'Your Cart',
         path: '/cart',
-        products
+        products,
+        authenticated
       });
 
     })
@@ -144,12 +155,15 @@ exports.postOrders = (request, response, next) => {
 
 exports.getOrders = (request, response, next) => {
 
+  const authenticated = true
+
   Order.find({ 'user.userId': request.user._id })
     .then((orders) => {
       response.render('shop/orders', {
         title: 'Your Orders',
         path: '/orders',
-        orders
+        orders,
+        authenticated
       });
     })
     .catch((error) => console.log(error));

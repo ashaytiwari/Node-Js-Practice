@@ -25,6 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// middleware for adding user to each request
 app.use((request, response, next) => {
   User.findById('62f519fec335821558216119')
     .then((user) => {
@@ -32,7 +33,7 @@ app.use((request, response, next) => {
       next();
     })
     .catch((error) => console.log(error));
-})
+});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
