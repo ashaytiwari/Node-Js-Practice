@@ -1,5 +1,9 @@
 exports.get404page = (request, response, next) => {
 
-  response.status(404).render('404', { title: 'Page Not Found', path: null, authenticated: false });
+  response.status(404).render('404', {
+    title: 'Page Not Found',
+    path: null,
+    authenticated: request.session.authenticated
+  });
 
 };
