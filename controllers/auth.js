@@ -2,6 +2,8 @@ exports.getLogin = (request, response, next) => {
 
   const authenticated = true
 
+  console.log(request.session.authenticated);
+
   response.render('auth/login', {
     path: '/login',
     title: 'Login',
@@ -12,7 +14,7 @@ exports.getLogin = (request, response, next) => {
 
 exports.postLogin = (request, response, next) => {
 
-  response.setHeader('Set-Cookie', 'authenticated=true');
+  request.session.authenticated = true;
 
   response.redirect('/');
 

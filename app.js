@@ -7,6 +7,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -18,6 +19,14 @@ const User = require('./models/user');
 
 const app = express();
 
+const mongodbConnectionString = process.env.MONGODB_CONNECTION_STRING;
+const serverPort = process.env.SERVER_PORT;
+
+const store = new MongoDBStore({
+  uri: mongodbConnectionString,
+  collection: 'sessions'
+});
+
 // adding configuration to inform application that use ejs as view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -27,11 +36,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // middleware to initialize session
-app.use(session({
-  secret: 'my secret',
-  resave: false,
-  saveUninitialized: false
-}));
+app.use(
+  session({
+    secret: 'my secret',
+    resave: false,
+    saveUninitialized: false,
+    store
+  })
+);
 
 // middleware for adding user to each request
 app.use((request, response, next) => {
@@ -48,9 +60,6 @@ app.use(shopRoutes);
 app.use(authRoutes);
 
 app.use(errorsController.get404page);
-
-const mongodbConnectionString = process.env.MONGODB_CONNECTION_STRING;
-const serverPort = process.env.SERVER_PORT;
 
 mongoose.connect(mongodbConnectionString)
   .then(() => {
