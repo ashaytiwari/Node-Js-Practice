@@ -11,8 +11,10 @@ exports.getLogin = (request, response, next) => {
 exports.postLogin = (request, response, next) => {
 
   request.session.authenticated = true;
-
-  response.redirect('/');
+  request.session.save((error) => {
+    console.log(error);
+    response.redirect('/');
+  });
 
 };
 
