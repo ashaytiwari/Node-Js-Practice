@@ -25,3 +25,17 @@ exports.postLogout = (request, response, next) => {
   });
 
 };
+
+exports.getSignup = (request, response, next) => {
+
+  response.render('auth/signup', {
+    path: '/signup',
+    title: 'Signup',
+    authenticated: request.session.authenticated
+  });
+
+};
+
+exports.postSignup = (request, response, next) => {
+
+};

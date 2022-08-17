@@ -5,7 +5,6 @@ const { parseOrdersData, parseCartItemsData } = require('./utilities');
 
 exports.getLandingPage = (request, response, next) => {
 
-  console.log(request.session.authenticated);
   Product.find()
     .then((products) => {
       response.render('shop/index', {
