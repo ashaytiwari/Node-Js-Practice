@@ -1,3 +1,5 @@
+const User = require('../models/user');
+
 exports.getLogin = (request, response, next) => {
 
   response.render('auth/login', {
@@ -37,5 +39,34 @@ exports.getSignup = (request, response, next) => {
 };
 
 exports.postSignup = (request, response, next) => {
+
+  const body = request.body;
+
+  User.findOne({ email: body.email })
+    .then((userRecord) => {
+
+      if (userRecord !== null) {
+        return response.redirect('/signup');
+      }
+
+      const data = {
+        name: body.name,
+        email: body.email,
+        password: body.password,
+        cart: { items: [] }
+      };
+
+      console.log(data);
+
+      const user = new User(data);
+
+      return user.save();
+
+    })
+    .then(() => {
+      return response.redirect('/login');
+    })
+    .catch((error) => console.log(error));
+
 
 };

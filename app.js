@@ -63,29 +63,8 @@ app.use(errorsController.get404page);
 
 mongoose.connect(mongodbConnectionString)
   .then(() => {
-
-    User.findOne()
-      .then((user) => {
-
-        if (user !== null) {
-          return;
-        }
-
-        const _user = new User({
-          name: 'Ashay',
-          email: 'ashay@kritin.in',
-          cart: {
-            items: []
-          }
-        });
-
-        return _user.save();
-
-      })
-      .then(() => {
-        console.log('connected to a database');
-        app.listen(serverPort);
-      })
+    console.log('connected to a database');
+    app.listen(serverPort);
   })
   .catch((error) => console.log(error, 'Database connection error'));
 
