@@ -14,11 +14,31 @@ exports.getLogin = (request, response, next) => {
 
 exports.postLogin = (request, response, next) => {
 
-  request.session.authenticated = true;
-  request.session.save((error) => {
-    console.log(error);
-    response.redirect('/');
-  });
+  const body = request.body;
+
+  User.findOne({ email: body.email })
+    .then((user) => {
+
+      if (user === null) {
+        return response.redirect('/login');
+      }
+
+      bcrypt.compare(body.password, user.password)
+        .then((matched) => {
+
+          if (matched === false) {
+            return response.redirect('/login');
+          }
+
+          request.session.authenticated = true;
+          request.session.save((error) => {
+            console.log(error);
+            return response.redirect('/');
+          });
+
+        })
+    })
+    .catch((error) => console.log(error));
 
 };
 
