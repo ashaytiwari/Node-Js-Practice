@@ -7,7 +7,8 @@ exports.getLogin = (request, response, next) => {
   response.render('auth/login', {
     path: '/login',
     title: 'Login',
-    authenticated: request.session.authenticated
+    authenticated: request.session.authenticated,
+    csrfToken: request.csrfToken()
   });
 
 };

@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
+const csrf = require('csurf');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -18,6 +19,7 @@ const errorsController = require('./controllers/errors');
 const User = require('./models/user');
 
 const app = express();
+const csrfProtection = csrf();
 
 const mongodbConnectionString = process.env.MONGODB_CONNECTION_STRING;
 const serverPort = process.env.SERVER_PORT;
@@ -44,6 +46,8 @@ app.use(
     store
   })
 );
+
+app.use(csrfProtection);
 
 // middleware for adding user to each request
 app.use((request, response, next) => {

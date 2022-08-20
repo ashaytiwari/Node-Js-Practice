@@ -11,7 +11,8 @@ exports.getLandingPage = (request, response, next) => {
         title: 'My Amazing Shop',
         products,
         path: '/',
-        authenticated: request.session.authenticated
+        authenticated: request.session.authenticated,
+        csrfToken: request.csrfToken()
       });
     })
     .catch((error) => {
