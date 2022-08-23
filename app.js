@@ -51,12 +51,30 @@ app.use(csrfProtection);
 
 // middleware for adding user to each request
 app.use((request, response, next) => {
-  User.findById('62f519fec335821558216119')
-    .then((user) => {
-      request.user = user;
+
+  const user = request.session.user;
+
+  if (typeof user === 'undefined') {
+    return next();
+  }
+
+  User.findById(user._id)
+    .then((result) => {
+      request.user = result;
       next();
     })
     .catch((error) => console.log(error));
+
+});
+
+//middleware for adding express locals values 
+app.use((request, response, next) => {
+
+  response.locals.authenticated = request.session.authenticated;
+  response.locals.csrfToken = request.csrfToken();
+
+  next();
+
 });
 
 app.use('/admin', adminRoutes);

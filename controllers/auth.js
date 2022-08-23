@@ -6,9 +6,7 @@ exports.getLogin = (request, response, next) => {
 
   response.render('auth/login', {
     path: '/login',
-    title: 'Login',
-    authenticated: request.session.authenticated,
-    csrfToken: request.csrfToken()
+    title: 'Login'
   });
 
 };
@@ -32,6 +30,7 @@ exports.postLogin = (request, response, next) => {
           }
 
           request.session.authenticated = true;
+          request.session.user = user;
           request.session.save((error) => {
             console.log(error);
             return response.redirect('/');
@@ -55,8 +54,7 @@ exports.getSignup = (request, response, next) => {
 
   response.render('auth/signup', {
     path: '/signup',
-    title: 'Signup',
-    authenticated: request.session.authenticated
+    title: 'Signup'
   });
 
 };

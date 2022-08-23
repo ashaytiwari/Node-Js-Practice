@@ -8,8 +8,7 @@ exports.getAddProducts = (request, response, next) => {
     title: 'Add Product',
     path: '/admin/add-product',
     editing: false,
-    product: null,
-    authenticated: request.session.authenticated
+    product: null
   });
 
 };
@@ -59,8 +58,7 @@ exports.getEditProducts = (request, response, next) => {
         title: 'Edit Product',
         path: '/admin/edit-product',
         editing: editMode,
-        product,
-        authenticated: request.session.authenticated
+        product
       });
 
     })
@@ -119,8 +117,7 @@ exports.getProducts = (request, response, next) => {
       response.render('admin/products', {
         title: 'Admin Products',
         products,
-        path: '/admin/products',
-        authenticated: request.session.authenticated
+        path: '/admin/products'
       });
     })
     .catch((error) => {

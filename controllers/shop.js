@@ -10,9 +10,7 @@ exports.getLandingPage = (request, response, next) => {
       response.render('shop/index', {
         title: 'My Amazing Shop',
         products,
-        path: '/',
-        authenticated: request.session.authenticated,
-        csrfToken: request.csrfToken()
+        path: '/'
       });
     })
     .catch((error) => {
@@ -28,8 +26,7 @@ exports.getProducts = (request, response, next) => {
       response.render('shop/product-list', {
         title: 'Products',
         products,
-        path: '/products',
-        authenticated: request.session.authenticated
+        path: '/products'
       });
     })
     .catch((error) => {
@@ -48,8 +45,7 @@ exports.getProductDetails = (request, response, next) => {
       response.render('shop/product-detail', {
         title: product.title,
         product,
-        path: '/products',
-        authenticated: request.session.authenticated
+        path: '/products'
       });
 
     })
@@ -70,8 +66,7 @@ exports.getCart = (request, response, next) => {
       response.render('shop/cart', {
         title: 'Your Cart',
         path: '/cart',
-        products,
-        authenticated: request.session.authenticated
+        products
       });
 
     })
@@ -154,8 +149,7 @@ exports.getOrders = (request, response, next) => {
       response.render('shop/orders', {
         title: 'Your Orders',
         path: '/orders',
-        orders,
-        authenticated: request.session.authenticated
+        orders
       });
     })
     .catch((error) => console.log(error));
