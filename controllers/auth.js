@@ -4,9 +4,18 @@ const User = require('../models/user');
 
 exports.getLogin = (request, response, next) => {
 
+  let message = request.flash('error');
+
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+
   response.render('auth/login', {
     path: '/login',
-    title: 'Login'
+    title: 'Login',
+    errorMessage: message
   });
 
 };
@@ -19,6 +28,7 @@ exports.postLogin = (request, response, next) => {
     .then((user) => {
 
       if (user === null) {
+        request.flash('error', 'Account with this email does not exists.');
         return response.redirect('/login');
       }
 
@@ -26,6 +36,7 @@ exports.postLogin = (request, response, next) => {
         .then((matched) => {
 
           if (matched === false) {
+            request.flash('error', 'Password mismatch.');
             return response.redirect('/login');
           }
 
@@ -52,9 +63,18 @@ exports.postLogout = (request, response, next) => {
 
 exports.getSignup = (request, response, next) => {
 
+  let message = request.flash('error');
+
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+
   response.render('auth/signup', {
     path: '/signup',
-    title: 'Signup'
+    title: 'Signup',
+    errorMessage: message
   });
 
 };
@@ -67,6 +87,7 @@ exports.postSignup = (request, response, next) => {
     .then((userRecord) => {
 
       if (userRecord !== null) {
+        request.flash('error', 'Account with this email already exists. Try with another email!');
         return response.redirect('/signup');
       }
 
