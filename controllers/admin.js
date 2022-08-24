@@ -112,7 +112,7 @@ exports.deleteProduct = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
-  Product.find()
+  Product.find({ userId: request.user._id })
     .then((products) => {
       response.render('admin/products', {
         title: 'Admin Products',
