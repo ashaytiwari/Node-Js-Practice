@@ -215,3 +215,30 @@ exports.postForgotPassword = (request, response, next) => {
     }
   })
 };
+
+exports.getNewPassword = (request, response, next) => {
+
+  const token = request.params.token;
+
+  User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
+    .then((user) => {
+
+      let message = request.flash('error');
+
+      if (message.length > 0) {
+        message = message[0];
+      } else {
+        message = null;
+      }
+
+      response.render('auth/new-password', {
+        path: '/new-password',
+        title: 'New Password',
+        errorMessage: message,
+        userId: user._id.toString()
+      });
+
+    })
+    .catch((error) => console.log(error));
+
+};

@@ -18,4 +18,6 @@ router.get('/forgot-password', authController.getForgotPassword);
 
 router.post('/forgot-password', authController.postForgotPassword);
 
+router.get('/forgot-password/:token', authController.getNewPassword);
+
 module.exports = router;
