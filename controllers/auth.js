@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer')
+const crypto = require('crypto');
 
 const User = require('../models/user');
 
@@ -131,16 +132,86 @@ exports.postSignup = (request, response, next) => {
         html: `<h2 style="color:#ff6600;">Hello ${body.name}!, Welcome to Book shop!</h2>`
       };
 
-      transporter.sendMail(mailOptions, function (error, info) {
-
-        if (error) {
-          return console.log(error);
-        }
-
-      })
+      transporter.sendMail(mailOptions);
 
     })
     .catch((error) => console.log(error));
 
+};
 
+exports.getForgotPassword = (request, response, next) => {
+
+  let message = request.flash('error');
+
+  if (message.length > 0) {
+    message = message[0];
+  } else {
+    message = null;
+  }
+
+  response.render('auth/forgot-password', {
+    path: '/forgot-password',
+    title: 'Forgot Password',
+    errorMessage: message
+  });
+
+};
+
+exports.postForgotPassword = (request, response, next) => {
+
+  const body = request.body;
+
+  crypto.randomBytes(32, (error, buffer) => {
+
+    if (error) {
+      request.flash('error', 'Error in generating authentication token.');
+      return response.redirect('/forgot-password');
+    }
+
+    const token = buffer.toString('hex');
+
+    User.findOne({ email: body.email })
+      .then((user) => {
+
+        if (!user) {
+          request.flash('error', 'Account with this email is not found.');
+          return response.redirect('/forgot-password');
+        }
+
+        user.resetToken = token;
+        user.resetTokenExpiration = Date.now() + 3600000;
+        return user.save();
+
+      })
+      .then(() => {
+
+        response.redirect('/');
+
+        const mailOptions = {
+          from: 'bookshop@admin.com',
+          to: body.email,
+          subject: 'Reset Password',
+          html: `
+          <h1 style="color:#ff6600;">Reset your password!</h1>
+          <p style="color:#ff6600;">
+          Click this 
+          <a href="http://localhost:8000/forgot-password/${token}"> link </a>
+          to set a new password.
+          </p>
+        `
+        };
+
+        transporter.sendMail(mailOptions);
+
+      })
+      .catch((error) => console.log(error));
+  })
+
+
+  crypto.randomBytes(32, (error, buffer) => {
+    if (error) {
+      console.log(error);
+      return response.redirect('/forgot-password');
+    }
+  })
 };
