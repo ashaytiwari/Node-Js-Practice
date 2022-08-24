@@ -235,9 +235,50 @@ exports.getNewPassword = (request, response, next) => {
         path: '/new-password',
         title: 'New Password',
         errorMessage: message,
-        userId: user._id.toString()
+        userId: user._id.toString(),
+        passwordToken: token
       });
 
+    })
+    .catch((error) => console.log(error));
+
+};
+
+exports.postNewPassword = (request, response, next) => {
+
+  const password = request.body.password;
+  const token = request.body.token;
+  const userId = request.body.userId;
+
+  let resetUser;
+
+  User.findOne({
+    resetToken: token,
+    _id: userId,
+    resetTokenExpiration: { $gt: Date.now() }
+  })
+    .then((user) => {
+
+      if (!user) {
+        request.flash('error', 'Something went wrong. Try again later!');
+        return response.redirect('/forgot-password');
+      }
+
+      resetUser = user;
+
+      return bcrypt.hash(password, 12);
+    })
+    .then((hashedPassword) => {
+
+      resetUser.password = hashedPassword;
+      resetUser.resetToken = undefined;
+      resetUser.resetTokenExpiration = undefined;
+
+      return resetUser.save();
+
+    })
+    .then((result) => {
+      response.redirect('/login');
     })
     .catch((error) => console.log(error));
 
