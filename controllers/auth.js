@@ -1,6 +1,16 @@
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer')
 
 const User = require('../models/user');
+
+const transporter = nodemailer.createTransport({
+  host: "smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "dc9ca81cde9ba6",
+    pass: "c7814ed5725169"
+  }
+});
 
 exports.getLogin = (request, response, next) => {
 
@@ -83,7 +93,9 @@ exports.postSignup = (request, response, next) => {
 
   const body = request.body;
 
-  User.findOne({ email: body.email })
+  const email = body.email;
+
+  User.findOne({ email })
     .then((userRecord) => {
 
       if (userRecord !== null) {
@@ -96,7 +108,7 @@ exports.postSignup = (request, response, next) => {
 
           const data = {
             name: body.name,
-            email: body.email,
+            email,
             password: hashedPassword,
             cart: { items: [] }
           };
@@ -109,7 +121,24 @@ exports.postSignup = (request, response, next) => {
 
     })
     .then(() => {
-      return response.redirect('/login');
+
+      response.redirect('/login');
+
+      const mailOptions = {
+        from: 'bookshop@admin.com',
+        to: email,
+        subject: 'Registered successfully!',
+        html: `<h2 style="color:#ff6600;">Hello ${body.name}!, Welcome to Book shop!</h2>`
+      };
+
+      transporter.sendMail(mailOptions, function (error, info) {
+
+        if (error) {
+          return console.log(error);
+        }
+
+      })
+
     })
     .catch((error) => console.log(error));
 
