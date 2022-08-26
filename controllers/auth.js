@@ -109,29 +109,19 @@ exports.postSignup = (request, response, next) => {
 
   }
 
-  User.findOne({ email })
-    .then((userRecord) => {
+  bcrypt.hash(body.password, 12)
+    .then((hashedPassword) => {
 
-      if (userRecord !== null) {
-        request.flash('error', 'Account with this email already exists. Try with another email!');
-        return response.redirect('/signup');
-      }
+      const data = {
+        name: body.name,
+        email,
+        password: hashedPassword,
+        cart: { items: [] }
+      };
 
-      return bcrypt.hash(body.password, 12)
-        .then((hashedPassword) => {
+      const user = new User(data);
 
-          const data = {
-            name: body.name,
-            email,
-            password: hashedPassword,
-            cart: { items: [] }
-          };
-
-          const user = new User(data);
-
-          return user.save();
-
-        });
+      return user.save();
 
     })
     .then(() => {
@@ -148,7 +138,6 @@ exports.postSignup = (request, response, next) => {
       transporter.sendMail(mailOptions);
 
     })
-    .catch((error) => console.log(error));
 
 };
 
