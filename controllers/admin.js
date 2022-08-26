@@ -1,4 +1,5 @@
 const mongodb = require('mongodb');
+const { validationResult } = require('express-validator');
 
 const Product = require('../models/product');
 
@@ -8,7 +9,8 @@ exports.getAddProducts = (request, response, next) => {
     title: 'Add Product',
     path: '/admin/add-product',
     editing: false,
-    product: null
+    product: null,
+    errorMessage: null
   });
 
 };
@@ -24,6 +26,20 @@ exports.postAddProducts = (request, response, next) => {
     description: body.description,
     userId: request.user._id
   };
+
+  const errors = validationResult(request);
+
+  if (errors.isEmpty() === false) {
+
+    return response.status(422).render('admin/edit-product', {
+      title: 'Add Product',
+      path: '/admin/add-product',
+      editing: false,
+      product: null,
+      errorMessage: errors.array()[0].msg
+    });
+
+  }
 
   const product = new Product(productData);
 
@@ -58,7 +74,8 @@ exports.getEditProducts = (request, response, next) => {
         title: 'Edit Product',
         path: '/admin/edit-product',
         editing: editMode,
-        product
+        product,
+        errorMessage: null
       });
 
     })
