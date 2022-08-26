@@ -36,6 +36,18 @@ exports.postLogin = (request, response, next) => {
 
   const body = request.body;
 
+  const errors = validationResult(request);
+
+  if (errors.isEmpty() === false) {
+
+    return response.status(422).render('auth/login', {
+      path: '/login',
+      title: 'Login',
+      errorMessage: errors.array()[0].msg
+    });
+
+  }
+
   User.findOne({ email: body.email })
     .then((user) => {
 
@@ -101,7 +113,7 @@ exports.postSignup = (request, response, next) => {
 
   if (errors.isEmpty() === false) {
 
-    return response.render('auth/signup', {
+    return response.status(422).render('auth/signup', {
       path: '/signup',
       title: 'Signup',
       errorMessage: errors.array()[0].msg
