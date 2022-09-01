@@ -60,7 +60,7 @@ exports.postAddProducts = (request, response, next) => {
   product
     .save()
     .then((result) => {
-      response.redirect('/admin/add-product');
+      response.redirect('/admin/products');
     }).catch((error) => {
       console.log(error)
     });
