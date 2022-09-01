@@ -60,7 +60,7 @@ exports.postAddProducts = (request, response, next) => {
   product
     .save()
     .then((result) => {
-      response.redirect('/');
+      response.redirect('/admin/add-product');
     }).catch((error) => {
       console.log(error)
     });
@@ -103,7 +103,7 @@ exports.postEditProducts = (request, response, next) => {
 
   const id = request.body.productId;
   const title = request.body.title;
-  const imageURL = request.body.imageURL;
+  const image = request.file;
   const price = request.body.price;
   const description = request.body.description;
 
@@ -111,9 +111,12 @@ exports.postEditProducts = (request, response, next) => {
     .then((product) => {
 
       product.title = title;
-      product.imageURL = imageURL;
       product.price = price;
       product.description = description;
+
+      if (image) {
+        product.imageURL = image.path;
+      }
 
       return product.save();
 
