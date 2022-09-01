@@ -10,6 +10,7 @@ const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
 const csrf = require('csurf');
 const flash = require('connect-flash');
+const multer = require('multer');
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
@@ -30,11 +31,22 @@ const store = new MongoDBStore({
   collection: 'sessions'
 });
 
+const fileStorageConfiguration = multer.diskStorage({
+  destination: (request, file, callback) => {
+    callback(null, 'images');
+  },
+  filename: (request, file, callback) => {
+    callback(null, new Date().toISOString() + '-' + file.originalname);
+  }
+});
+
 // adding configuration to inform application that use ejs as view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(multer({ storage: fileStorageConfiguration }).single('image'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 

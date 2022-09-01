@@ -19,37 +19,39 @@ exports.postAddProducts = (request, response, next) => {
 
   const body = request.body;
 
-  const productData = {
-    title: body.title,
-    imageURL: body.imageURL,
-    price: body.price,
-    description: body.description,
-    userId: request.user._id
-  };
+  console.log(request.file);
 
-  const errors = validationResult(request);
+  // const productData = {
+  //   title: body.title,
+  //   imageURL: body.imageURL,
+  //   price: body.price,
+  //   description: body.description,
+  //   userId: request.user._id
+  // };
 
-  if (errors.isEmpty() === false) {
+  // const errors = validationResult(request);
 
-    return response.status(422).render('admin/edit-product', {
-      title: 'Add Product',
-      path: '/admin/add-product',
-      editing: false,
-      product: null,
-      errorMessage: errors.array()[0].msg
-    });
+  // if (errors.isEmpty() === false) {
 
-  }
+  //   return response.status(422).render('admin/edit-product', {
+  //     title: 'Add Product',
+  //     path: '/admin/add-product',
+  //     editing: false,
+  //     product: null,
+  //     errorMessage: errors.array()[0].msg
+  //   });
 
-  const product = new Product(productData);
+  // }
 
-  product
-    .save()
-    .then((result) => {
-      response.redirect('/');
-    }).catch((error) => {
-      console.log(error)
-    });
+  // const product = new Product(productData);
+
+  // product
+  //   .save()
+  //   .then((result) => {
+  //     response.redirect('/');
+  //   }).catch((error) => {
+  //     console.log(error)
+  //   });
 
 }
 
