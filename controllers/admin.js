@@ -19,39 +19,51 @@ exports.postAddProducts = (request, response, next) => {
 
   const body = request.body;
 
-  console.log(request.file);
+  const image = request.file;
 
-  // const productData = {
-  //   title: body.title,
-  //   imageURL: body.imageURL,
-  //   price: body.price,
-  //   description: body.description,
-  //   userId: request.user._id
-  // };
+  if (typeof image === 'undefined') {
+    return response.status(422).render('admin/edit-product', {
+      title: 'Add Product',
+      path: '/admin/add-product',
+      editing: false,
+      product: null,
+      errorMessage: 'Only png, jpg and jpeg file is allowed'
+    });
+  }
 
-  // const errors = validationResult(request);
+  const imageURL = image.path;
 
-  // if (errors.isEmpty() === false) {
+  const productData = {
+    title: body.title,
+    imageURL: imageURL,
+    price: body.price,
+    description: body.description,
+    userId: request.user._id
+  };
 
-  //   return response.status(422).render('admin/edit-product', {
-  //     title: 'Add Product',
-  //     path: '/admin/add-product',
-  //     editing: false,
-  //     product: null,
-  //     errorMessage: errors.array()[0].msg
-  //   });
+  const errors = validationResult(request);
 
-  // }
+  if (errors.isEmpty() === false) {
 
-  // const product = new Product(productData);
+    return response.status(422).render('admin/edit-product', {
+      title: 'Add Product',
+      path: '/admin/add-product',
+      editing: false,
+      product: null,
+      errorMessage: errors.array()[0].msg
+    });
 
-  // product
-  //   .save()
-  //   .then((result) => {
-  //     response.redirect('/');
-  //   }).catch((error) => {
-  //     console.log(error)
-  //   });
+  }
+
+  const product = new Product(productData);
+
+  product
+    .save()
+    .then((result) => {
+      response.redirect('/');
+    }).catch((error) => {
+      console.log(error)
+    });
 
 }
 

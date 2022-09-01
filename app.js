@@ -40,13 +40,21 @@ const fileStorageConfiguration = multer.diskStorage({
   }
 });
 
+const fileFilter = (request, file, callback) => {
+  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg') {
+    callback(null, true);
+  } else {
+    callback(null, false);
+  }
+};
+
 // adding configuration to inform application that use ejs as view engine
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(multer({ storage: fileStorageConfiguration }).single('image'));
+app.use(multer({ storage: fileStorageConfiguration, fileFilter }).single('image'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
