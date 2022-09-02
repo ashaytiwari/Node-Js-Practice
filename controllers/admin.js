@@ -156,7 +156,7 @@ exports.getProducts = (request, response, next) => {
 
       totalItems = numberOfProducts;
 
-      return Product.find()
+      return Product.find({ userId: request.user._id })
         .skip((page - 1) * PAGE_LIMIT)
         .limit(PAGE_LIMIT);
 
