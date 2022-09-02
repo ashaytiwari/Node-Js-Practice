@@ -146,13 +146,35 @@ exports.deleteProduct = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
+  const page = +request.query.page || 1;
+  const PAGE_LIMIT = 3;
+  let totalItems;
+
   Product.find({ userId: request.user._id })
+    .countDocuments()
+    .then((numberOfProducts) => {
+
+      totalItems = numberOfProducts;
+
+      return Product.find()
+        .skip((page - 1) * PAGE_LIMIT)
+        .limit(PAGE_LIMIT);
+
+    })
     .then((products) => {
+
       response.render('admin/products', {
         title: 'Admin Products',
         products,
-        path: '/admin/products'
+        path: '/admin/products',
+        currentPage: page,
+        hasNextPage: PAGE_LIMIT * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / PAGE_LIMIT)
       });
+
     })
     .catch((error) => {
       console.log(error);
