@@ -7,9 +7,15 @@ const Product = require('../models/product');
 
 const { parseOrdersData, parseCartItemsData } = require('./utilities');
 
+const PAGE_LIMIT = 3;
+
 exports.getLandingPage = (request, response, next) => {
 
+  const page = request.query.page;
+
   Product.find()
+    .skip((page - 1) * PAGE_LIMIT)
+    .limit(PAGE_LIMIT)
     .then((products) => {
       response.render('shop/index', {
         title: 'My Amazing Shop',
@@ -105,15 +111,6 @@ exports.postCart = (request, response, next) => {
     });
 
 };
-
-// exports.getCheckout = (request, response, next) => {
-
-//   response.render('shop/checkout', {
-//     title: 'Your Checkout',
-//     path: '/checkout'
-//   });
-
-// };
 
 exports.postOrders = (request, response, next) => {
 
