@@ -7,11 +7,10 @@ const Product = require('../models/product');
 
 const { parseOrdersData, parseCartItemsData } = require('./utilities');
 
-const PAGE_LIMIT = 3;
-
 exports.getLandingPage = (request, response, next) => {
 
   const page = request.query.page;
+  const PAGE_LIMIT = 3;
   let totalItems;
 
   Product.find()
@@ -29,13 +28,7 @@ exports.getLandingPage = (request, response, next) => {
       response.render('shop/index', {
         title: 'My Amazing Shop',
         products,
-        path: '/',
-        currentPage: page,
-        hasNextPage: PAGE_LIMIT * page < totalItems,
-        hasPreviousPage: page > 1,
-        nextPage: page + 1,
-        previousPage: page - 1,
-        lastPage: Math.ceil(totalItems / PAGE_LIMIT)
+        path: '/'
       });
 
     })
@@ -47,12 +40,31 @@ exports.getLandingPage = (request, response, next) => {
 
 exports.getProducts = (request, response, next) => {
 
+  const page = +request.query.page || 1;
+  const PAGE_LIMIT = 3;
+  let totalItems;
+
   Product.find()
-    .then((products) => {
+    .countDocuments()
+    .then((numberOfProducts) => {
+
+      totalItems = numberOfProducts;
+
+      return Product.find()
+        .skip((page - 1) * PAGE_LIMIT)
+        .limit(PAGE_LIMIT);
+
+    }).then((products) => {
       response.render('shop/product-list', {
         title: 'Products',
         products,
-        path: '/products'
+        path: '/products',
+        currentPage: page,
+        hasNextPage: PAGE_LIMIT * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / PAGE_LIMIT)
       });
     })
     .catch((error) => {

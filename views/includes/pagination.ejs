@@ -1,0 +1,7 @@
+<section class="pagination">
+  <a href="?page=<%= previousPage %>" class="<% if(hasPreviousPage === false){ %>disabled<% } %>">Previous</a>
+  <label>
+    <%= currentPage %> of <%= lastPage %>
+  </label>
+  <a href="?page=<%= nextPage %>" class="<% if(hasNextPage === false){ %> disabled <% } %>">Next</a>
+</section>

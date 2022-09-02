@@ -252,13 +252,23 @@ form {
   background-color: inherit;
   padding: 10px;
   text-align: center;
-  margin-right: 20px;
   text-decoration: none;
+  display: inline-block;
+  width: 150px;
 }
 
-.pagination a:hover, .pagination a:active, .see-more-control:hover{
+.pagination a:hover, .pagination a:active,  .see-more-control:hover{
   background-color: #00695c;
   color: #fff;
+}
+
+.pagination a.disabled{
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.pagination label{
+  margin: 0 15px;
 }
 
 .see-more-section{
