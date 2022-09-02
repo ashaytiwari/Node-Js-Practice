@@ -12,16 +12,32 @@ const PAGE_LIMIT = 3;
 exports.getLandingPage = (request, response, next) => {
 
   const page = request.query.page;
+  let totalItems;
 
   Product.find()
-    .skip((page - 1) * PAGE_LIMIT)
-    .limit(PAGE_LIMIT)
-    .then((products) => {
+    .countDocuments()
+    .then((numberOfProducts) => {
+
+      totalItems = numberOfProducts;
+
+      return Product.find()
+        .skip((page - 1) * PAGE_LIMIT)
+        .limit(PAGE_LIMIT);
+
+    }).then((products) => {
+
       response.render('shop/index', {
         title: 'My Amazing Shop',
         products,
-        path: '/'
+        path: '/',
+        currentPage: page,
+        hasNextPage: PAGE_LIMIT * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / PAGE_LIMIT)
       });
+
     })
     .catch((error) => {
       console.log(error);

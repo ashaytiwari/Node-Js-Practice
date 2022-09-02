@@ -256,9 +256,24 @@ form {
   text-decoration: none;
 }
 
-.pagination a:hover, .paginationa a:active{
+.pagination a:hover, .pagination a:active, .see-more-control:hover{
   background-color: #00695c;
   color: #fff;
+}
+
+.see-more-section{
+  text-align: center;
+  margin: 50px 0;
+}
+
+.see-more-control{
+  padding: 10px 15px;
+  text-align: center;
+  text-decoration: none;
+  background-color: inherit;
+  border: 1px solid #00695c;
+  color: #00695c;
+  margin: 0 auto;
 }
 
 @media (min-width: 768px) {
