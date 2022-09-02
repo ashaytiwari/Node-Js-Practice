@@ -171,6 +171,9 @@ exports.getInvoice = (request, response, next) => {
       console.log(error);
     }
 
+    response.setHeader('Content-Type', 'application/pdf');
+    response.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+
     response.send(data);
 
   });
