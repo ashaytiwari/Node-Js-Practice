@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const PDFDocument = require('pdfkit');
 
 const Order = require('../models/order');
 const Product = require('../models/product');
@@ -176,18 +177,52 @@ exports.getInvoice = (request, response, next) => {
         return console.log('Unauthorized user for accessing invoice');
       }
 
-      fs.readFile(invoicePath, (error, data) => {
+      // fs.readFile(invoicePath, (error, data) => {
 
-        if (error) {
-          console.log(error);
-        }
+      //   if (error) {
+      //     console.log(error);
+      //   }
 
-        response.setHeader('Content-Type', 'application/pdf');
-        response.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+      //   response.setHeader('Content-Type', 'application/pdf');
+      //   response.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
 
-        response.send(data);
+      //   response.send(data);
 
+      // });
+
+      // const file = fs.createReadStream(invoicePath);
+
+      const pdfDocument = new PDFDocument();
+
+      response.setHeader('Content-Type', 'application/pdf');
+      response.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+
+      pdfDocument.pipe(fs.createWriteStream(invoicePath));
+      pdfDocument.pipe(response);
+
+      // generating invoice document content
+      pdfDocument.fontSize(26).text('Invoice', {
+        underline: true
       });
+      pdfDocument.text('-----------------------');
+      let totalPrice = 0;
+      order.products.forEach(prod => {
+        totalPrice += prod.quantity * prod.product.price;
+        pdfDocument
+          .fontSize(14)
+          .text(
+            prod.product.title +
+            ' - ' +
+            prod.quantity +
+            ' x ' +
+            '$' +
+            prod.product.price
+          );
+      });
+      pdfDocument.text('---');
+      pdfDocument.fontSize(20).text('Total Price: $' + totalPrice);
+
+      pdfDocument.end();
 
     })
     .catch((error) => console.log(error));
