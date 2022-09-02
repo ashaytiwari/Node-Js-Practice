@@ -165,17 +165,31 @@ exports.getInvoice = (request, response, next) => {
   const invoiceName = 'invoice-' + orderId + '.pdf';
   const invoicePath = path.join('data', 'invoices', invoiceName);
 
-  fs.readFile(invoicePath, (error, data) => {
+  Order.findById(orderId)
+    .then((order) => {
 
-    if (error) {
-      console.log(error);
-    }
+      if (!order) {
+        return console.log('Order not found');
+      }
 
-    response.setHeader('Content-Type', 'application/pdf');
-    response.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+      if (order.user.userId.toString() !== request.user._id.toString()) {
+        return console.log('Unauthorized user for accessing invoice');
+      }
 
-    response.send(data);
+      fs.readFile(invoicePath, (error, data) => {
 
-  });
+        if (error) {
+          console.log(error);
+        }
+
+        response.setHeader('Content-Type', 'application/pdf');
+        response.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
+
+        response.send(data);
+
+      });
+
+    })
+    .catch((error) => console.log(error));
 
 };
